@@ -571,6 +571,53 @@ document.addEventListener('DOMContentLoaded', () => {
         saveHistory();
         const originalText = saveMenuBtn.textContent;
         saveMenuBtn.textContent = '保存しました！ ✓';
+        // --- ここから追加・修正（シェア機能） ---
+    async function shareWorkoutToGemini() {
+        const date = getCurrentDate();
+        const dailyMenu = workoutHistory[date];
+
+        if (!dailyMenu || dailyMenu.length === 0) {
+            return; // シェアするメニューがない場合は何もしない
+        }
+
+        // Geminiに送るためのテキストを自動作成する
+        let workoutText = `【${date} の筋トレ記録】\n\n`;
+
+        dailyMenu.forEach(item => {
+            workoutText += `種目：${item.exercise}\n`;
+            item.sets.forEach((set, index) => {
+                // 完了にチェックが入っているかどうかも判定できます（不要なら消してもOK）
+                const status = set.completed ? '完了' : '未完了';
+                workoutText += `・${index + 1}セット：${set.weight}kg × ${set.reps}回\n`;
+            });
+            workoutText += '\n';
+        });
+
+        workoutText += `このトレーニングメニューのボリュームや、次回の重量設定について、AIパーソナルトレーナーとしてアドバイスをお願いします！`;
+
+        // スマホのシェア画面を呼び出す
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: '今日の筋トレ記録',
+                    text: workoutText,
+                });
+            } catch (error) {
+                console.log('シェアがキャンセルされました', error);
+            }
+        } else {
+            alert('お使いのブラウザはシェア機能に対応していません。\n\n' + workoutText);
+        }
+    }
+
+    saveMenuBtn.addEventListener('click', () => {
+        saveHistory();
+        
+        // 保存処理の直後に、上で作ったシェア機能を呼び出す！
+        shareWorkoutToGemini();
+
+        const originalText = saveMenuBtn.textContent;
+        saveMenuBtn.textContent = '保存しました！ ✓';
         saveMenuBtn.style.background = '#10b981';
         saveMenuBtn.style.color = '#ffffff';
         setTimeout(() => {
@@ -579,6 +626,8 @@ document.addEventListener('DOMContentLoaded', () => {
             saveMenuBtn.style.color = '';
         }, 2000);
     });
+    // --- ここまで ---
+
 
     clearMenuBtn.addEventListener('click', () => {
         const date = getCurrentDate();
