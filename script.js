@@ -168,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuListTitle = document.getElementById('menu-list-title');
     const categoryFilter = document.getElementById('category-filter');
     const menuExerciseSelect = document.getElementById('menu-exercise');
+    const customExerciseContainer = document.getElementById('custom-exercise-container');
     const customExerciseInput = document.getElementById('custom-exercise');
     const addMenuBtn = document.getElementById('add-menu-btn');
     const workoutMenuList = document.getElementById('workout-menu-list');
@@ -414,6 +415,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     const defaultExerciseOption = menuExerciseSelect.querySelector('option[disabled]');
 
+    function loadCustomExercises() {
+        const customExercises = JSON.parse(localStorage.getItem('customExercises')) || [];
+        customExercises.forEach(ex => {
+            const targetGroup = originalOptgroups.find(g => g.label === ex.category);
+            if (targetGroup && !targetGroup.options.some(o => o.value === ex.name)) {
+                if (ex.category === 'その他') {
+                    const otherOptionIdx = targetGroup.options.findIndex(o => o.value === 'その他（自由入力）');
+                    if (otherOptionIdx !== -1) {
+                        targetGroup.options.splice(otherOptionIdx, 0, { value: ex.name, text: ex.name });
+                    } else {
+                        targetGroup.options.push({ value: ex.name, text: ex.name });
+                    }
+                } else {
+                    targetGroup.options.push({ value: ex.name, text: ex.name });
+                }
+            }
+        });
+    }
+    loadCustomExercises();
+
     function renderExerciseOptions(filterValue) {
         menuExerciseSelect.innerHTML = '';
         if (defaultExerciseOption) {
@@ -434,8 +455,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        if (filterValue !== 'all' && filterValue !== 'その他') {
+            const optgroupEl = document.createElement('optgroup');
+            optgroupEl.label = "新しい種目を追加";
+            const optionEl = document.createElement('option');
+            optionEl.value = 'その他（自由入力）';
+            optionEl.textContent = 'その他...';
+            optgroupEl.appendChild(optionEl);
+            menuExerciseSelect.appendChild(optgroupEl);
+        }
+
         menuExerciseSelect.selectedIndex = 0;
-        customExerciseInput.classList.add('hidden');
+        customExerciseContainer.classList.add('hidden');
         customExerciseInput.value = '';
     }
 
@@ -448,10 +479,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // "Other" exercise input toggle
     menuExerciseSelect.addEventListener('change', (e) => {
         if (e.target.value === 'その他（自由入力）') {
-            customExerciseInput.classList.remove('hidden');
+            customExerciseContainer.classList.remove('hidden');
             customExerciseInput.focus();
         } else {
-            customExerciseInput.classList.add('hidden');
+            customExerciseContainer.classList.add('hidden');
             customExerciseInput.value = '';
         }
     });
@@ -527,11 +558,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="grid-input-wrapper">
                             <input type="number" class="mini-input set-reps" value="${set.reps}" min="0" step="1">
                         </div>
-                        <div class="grid-input-wrapper">
-                            <select class="mini-input set-rpe" style="padding: 0.1rem; text-align: center; appearance: auto;">
-                                ${rpeOptions}
-                            </select>
-                        </div>
                         <div class="grid-checkbox-wrapper">
                             <input type="checkbox" class="set-checkbox" ${isChecked} title="完了">
                         </div>
@@ -559,11 +585,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 <div class="exercise-details" style="display: ${displayStyle}; margin-top: 1rem;">
-                    <div class="set-header-row" style="margin-bottom: 0.2rem; grid-template-columns: 2rem 1fr 1fr 1fr 2.5rem 2rem;">
+                    <div class="set-header-row" style="margin-bottom: 0.2rem; grid-template-columns: 2rem 1fr 1fr 2.5rem 2rem;">
                         <span>セット</span>
                         <span>kg</span>
                         <span>回</span>
-                        <span>RPE</span>
                         <span>完了</span>
                         <span></span>
                     </div>
@@ -889,8 +914,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addMenuBtn.addEventListener('click', () => {
         let exercise = menuExerciseSelect.value;
+        let category = null;
+
         if (exercise === 'その他（自由入力）') {
             exercise = customExerciseInput.value.trim();
+            category = categoryFilter.value;
+
+            if (!exercise || exercise === '') {
+                alert('種目名を入力してください。');
+                addMenuBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => addMenuBtn.style.transform = '', 150);
+                return;
+            }
+
+            // Save to custom exercises
+            const customExercises = JSON.parse(localStorage.getItem('customExercises')) || [];
+            if (!customExercises.some(ex => ex.name === exercise)) {
+                customExercises.push({ name: exercise, category: category });
+                localStorage.setItem('customExercises', JSON.stringify(customExercises));
+
+                // Add to originalOptgroups in memory
+                const group = originalOptgroups.find(g => g.label === category);
+                if (group) {
+                    group.options.push({ value: exercise, text: exercise });
+                }
+            }
         }
 
         if (!exercise || exercise === '') {
@@ -912,11 +960,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         saveHistory();
+
+        // Re-render dropdown to verify the new exercise is there, then render menu
+        renderExerciseOptions(categoryFilter.value);
         renderMenu();
 
         // Clear and Reset Form
         menuExerciseSelect.selectedIndex = 0;
-        customExerciseInput.classList.add('hidden');
+        customExerciseContainer.classList.add('hidden');
         customExerciseInput.value = '';
     });
 
@@ -1218,6 +1269,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dataToExport = {
                     workoutHistory: JSON.parse(localStorage.getItem('workoutHistory') || '{}'),
                     workoutMetadata: JSON.parse(localStorage.getItem('workoutMetadata') || '{}'),
+                    customExercises: JSON.parse(localStorage.getItem('customExercises') || '[]'),
                     exportDate: new Date().toISOString()
                 };
 
@@ -1258,10 +1310,21 @@ document.addEventListener('DOMContentLoaded', () => {
                             // Overwrite
                             if (importedData.workoutHistory) localStorage.setItem('workoutHistory', JSON.stringify(importedData.workoutHistory));
                             if (importedData.workoutMetadata) localStorage.setItem('workoutMetadata', JSON.stringify(importedData.workoutMetadata));
+                            if (importedData.customExercises) localStorage.setItem('customExercises', JSON.stringify(importedData.customExercises));
                         } else {
                             // Merge
                             const currentHistory = JSON.parse(localStorage.getItem('workoutHistory') || '{}');
                             const currentMeta = JSON.parse(localStorage.getItem('workoutMetadata') || '{}');
+                            let currentCustomEx = JSON.parse(localStorage.getItem('customExercises') || '[]');
+
+                            // Merge custom exercises uniquely
+                            if (importedData.customExercises) {
+                                importedData.customExercises.forEach(ex => {
+                                    if (!currentCustomEx.some(c => c.name === ex.name)) {
+                                        currentCustomEx.push(ex);
+                                    }
+                                });
+                            }
 
                             // Merge history (if same date exists, imported data replaces it)
                             const mergedHistory = { ...currentHistory, ...(importedData.workoutHistory || {}) };
@@ -1269,6 +1332,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                             localStorage.setItem('workoutHistory', JSON.stringify(mergedHistory));
                             localStorage.setItem('workoutMetadata', JSON.stringify(mergedMeta));
+                            localStorage.setItem('customExercises', JSON.stringify(currentCustomEx));
                         }
 
                         // Reload memory variables

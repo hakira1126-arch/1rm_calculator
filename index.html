@@ -229,14 +229,13 @@
                         <div class="input-group">
                             <label for="category-filter">部位フィルター</label>
                             <select id="category-filter" style="margin-bottom: 1rem;">
-                                <option value="all" selected>すべての部位</option>
+                                <option value="オール" selected>すべての部位</option>
                                 <option value="胸（Chest）">胸（Chest）</option>
                                 <option value="背中（Back）">背中（Back）</option>
                                 <option value="足（Legs）">足（Legs）</option>
                                 <option value="肩（Shoulders）">肩（Shoulders）</option>
                                 <option value="上腕二頭筋（Biceps）">上腕二頭筋（Biceps）</option>
                                 <option value="上腕三頭筋（Triceps）">上腕三頭筋（Triceps）</option>
-                                <option value="その他">その他</option>
                             </select>
                             <label for="menu-exercise">種目名</label>
                             <select id="menu-exercise" class="exercise-select">
@@ -334,11 +333,14 @@
                                     <option value="オーバーヘッド・ケーブル・エクステンション">オーバーヘッド・ケーブル・エクステンション</option>
                                     <option value="マシン・ケーブル（上腕三頭筋）">マシン・ケーブル（上腕三頭筋）</option>
                                 </optgroup>
-
-                                <optgroup label="その他">
-                                    <option value="その他（自由入力）">その他...</option>
-                                </optgroup>
                             </select>
+
+                            <div id="custom-exercise-container" class="hidden"
+                                style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                                <input type="text" id="custom-exercise"
+                                    style="width: 100%; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 1.1rem; appearance: none; -webkit-appearance: none;"
+                                    placeholder="新しい種目名を入力">
+                            </div>
                         </div>
                         <button id="add-menu-btn" style="margin-top: 1rem;">今日のメニューに登録</button>
                     </div>
