@@ -567,10 +567,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRegistrationSets();
     });
 
-    saveMenuBtn.addEventListener('click', () => {
-        saveHistory();
-        const originalText = saveMenuBtn.textContent;
-        saveMenuBtn.textContent = '保存しました！ ✓';
         // --- ここから追加・修正（シェア機能） ---
     async function shareWorkoutToGemini() {
         const date = getCurrentDate();
@@ -627,8 +623,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 2000);
     });
     // --- ここまで ---
-
-
     clearMenuBtn.addEventListener('click', () => {
         const date = getCurrentDate();
         const displayDate = date === todayStr ? '今日' : 'この日';
