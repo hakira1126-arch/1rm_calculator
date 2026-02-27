@@ -147,7 +147,7 @@ header p {
 }
 
 #rest-timer-duration option {
-    background-color: #111111;
+    background-color: rgba(30, 30, 30, 0.7);
     color: #ffffff;
 }
 
@@ -213,7 +213,9 @@ header p {
     padding: 1rem;
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
-    background: var(--bg-color);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     color: var(--text-primary);
     font-size: 1.1rem;
     font-family: inherit;
@@ -234,15 +236,122 @@ header p {
 }
 
 .input-group select option {
-    background: #111111;
+    background: rgba(30, 30, 30, 0.7);
     color: var(--text-primary);
 }
 
 .input-group select optgroup {
-    background: #000000;
+    background: rgba(0, 0, 0, 0.8);
     color: var(--text-secondary);
     font-weight: 400;
     font-style: normal;
+}
+
+/* --- Custom Select CSS --- */
+.custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.custom-select select {
+    display: none;
+    /* Hide original SELECT element: */
+}
+
+.select-selected {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 1rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Style the arrow inside the select element: */
+.select-selected:after {
+    position: absolute;
+    content: "";
+    top: 50%;
+    right: 1.5rem;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-color: #94a3b8 transparent transparent transparent;
+    transform: translateY(-25%);
+}
+
+/* Point the arrow upwards when the select box is open (active): */
+.select-selected.select-arrow-active:after {
+    border-color: transparent transparent #94a3b8 transparent;
+    transform: translateY(-75%);
+}
+
+/* style the items (options), including the selected item: */
+.select-items {
+    position: absolute;
+    background: rgba(30, 30, 30, 0.75);
+    /* Glassmorphism background for options */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    margin-top: 5px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Hide the items when the select box is closed: */
+.select-hide {
+    display: none;
+}
+
+.select-items div {
+    color: var(--text-primary);
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
+}
+
+.select-items div:last-child {
+    border-bottom: none;
+}
+
+.select-items div:hover,
+.same-as-selected {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Specific styling for the rest timer custom select which is smaller */
+.rest-timer-custom .select-selected {
+    padding: 0.2rem 1.5rem 0.2rem 0.5rem;
+    font-size: 0.85rem;
+    border: none;
+    border-radius: 4px;
+}
+
+.rest-timer-custom .select-selected:after {
+    right: 0.5rem;
+    border-width: 4px;
+}
+
+.rest-timer-custom .select-items {
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.rest-timer-custom .select-items div {
+    padding: 8px 12px;
 }
 
 /* 独自のinput用のhidden */
@@ -582,24 +691,27 @@ button:active {
 
 .set-header-row {
     display: grid;
-    grid-template-columns: 40px 1fr 1fr 40px 30px;
+    grid-template-columns: 3rem 1.2fr 1.2fr 3rem 2rem;
     align-items: center;
     gap: 0.5rem;
     padding: 0 0.5rem;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
+    font-weight: 700;
     color: var(--text-secondary);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
     text-align: center;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 .set-row {
     display: grid;
-    grid-template-columns: 40px 1fr 1fr 40px 30px;
+    grid-template-columns: 3rem 1.2fr 1.2fr 3rem 2rem;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem;
+    padding: 0.4rem 0.5rem;
     background: transparent;
-    border-radius: 0;
+    border-radius: 4px;
     transition: var(--transition);
     text-align: center;
 }
@@ -631,18 +743,32 @@ button:active {
 
 .mini-input {
     width: 100%;
-    max-width: 80px;
-    padding: 0.4rem;
-    border-radius: 0;
-    border: 1px solid var(--border-color);
-    background: transparent;
+    max-width: 90px;
+    padding: 0.6rem 0.4rem;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
     color: var(--text-primary);
     text-align: center;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    font-weight: 600;
     appearance: none;
     -moz-appearance: textfield;
     font-family: 'Montserrat', sans-serif;
     font-variant-numeric: tabular-nums;
+    transition: all 0.2s ease;
+}
+
+.mini-input:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.mini-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--text-primary);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
 .set-rpe {
@@ -651,7 +777,7 @@ button:active {
 }
 
 .set-rpe option {
-    background-color: #111111;
+    background-color: rgba(30, 30, 30, 0.7);
     color: #ffffff;
 }
 
@@ -995,17 +1121,18 @@ button:active {
 /* Rest Timer UI */
 .rest-timer-overlay {
     position: fixed;
-    bottom: 2rem;
+    bottom: 2.5rem;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid var(--border-color);
-    padding: 0.8rem 2rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    background: rgba(15, 15, 15, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.8rem 1.8rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
     z-index: 1000;
-    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    border-radius: 100px;
 }
 
 .rest-timer-overlay.hidden {
@@ -1017,7 +1144,7 @@ button:active {
 .rest-timer-content {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.2rem;
 }
 
 .rest-timer-label {
@@ -1028,36 +1155,52 @@ button:active {
 }
 
 .rest-timer-time {
-    font-size: 1.8rem;
-    font-weight: 700;
+    font-size: 2.2rem;
+    font-weight: 800;
     font-variant-numeric: tabular-nums;
     color: var(--text-primary);
-    min-width: 4rem;
+    min-width: 5rem;
     text-align: center;
     font-family: 'Montserrat', sans-serif;
+    letter-spacing: -0.02em;
 }
 
 .rest-timer-time.finished {
     color: #ffffff;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    animation: pulseText 1.5s infinite alternate ease-in-out;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
 }
 
 .rest-timer-btn {
-    background: transparent;
-    border: 1px solid var(--text-secondary);
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
     color: var(--text-secondary);
-    padding: 0.4rem 1rem;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: var(--transition);
-    text-transform: uppercase;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 700;
     letter-spacing: 0.05em;
+    border-radius: 50px;
+    width: auto;
 }
 
 .rest-timer-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
     color: var(--text-primary);
-    border-color: var(--text-primary);
+}
+
+.rest-finished-flash {
+    animation: restFlash 1s infinite alternate;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+@keyframes pulseText {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0.5;
+    }
 }
 
 @keyframes pulseText {
@@ -1070,4 +1213,139 @@ button:active {
         opacity: 0.5;
         transform: scale(0.98);
     }
+}
+
+/* --- Category Filter Button & Modal --- */
+.category-filter-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 1rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    user-select: none;
+    transition: var(--transition);
+}
+
+.category-filter-btn:active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.category-filter-arrow {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    transition: var(--transition);
+}
+
+.category-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.2s ease;
+}
+
+.category-modal-overlay.hidden {
+    display: none !important;
+}
+
+.category-modal-content {
+    width: 90%;
+    max-width: 400px;
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    animation: slideUpFadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.category-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.category-modal-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.category-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.3rem 0.6rem;
+    width: auto;
+    line-height: 1;
+    transition: var(--transition);
+}
+
+.category-modal-close:hover {
+    color: var(--text-primary);
+}
+
+.category-modal-list {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.category-modal-item {
+    padding: 1rem 1.5rem;
+    color: var(--text-primary);
+    font-size: 1.05rem;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
+    user-select: none;
+}
+
+.category-modal-item:last-child {
+    border-bottom: none;
+}
+
+.category-modal-item:active {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.category-modal-item.selected {
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+}
+
+.category-modal-item.selected::before {
+    content: "✓ ";
+    color: var(--text-primary);
+}
+
+.category-modal-group-label {
+    padding: 0.8rem 1.5rem 0.4rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: default;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    letter-spacing: 0.05em;
+    user-select: none;
 }

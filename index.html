@@ -30,12 +30,13 @@
     <div class="container" style="position: relative; z-index: 1;">
         <header>
             <h1>BIG 3 1RM Calculator</h1>
-            <p>筋力アップのためのMAX重量計算 & メニュー管理</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem; color: var(--text-secondary); letter-spacing: 0.02em;">
+                Professional Max Strength Calculation & Training Management</p>
             <div class="tabs">
-                <button class="tab-btn active" data-tab="calc-tab">1RM 計算機</button>
-                <button class="tab-btn" data-tab="menu-tab">メニュー登録</button>
-                <button class="tab-btn" data-tab="review-tab">トレーニング記録</button>
-                <button class="tab-btn" data-tab="settings-tab">設定</button>
+                <button class="tab-btn active" data-tab="calc-tab">1RM CALC</button>
+                <button class="tab-btn" data-tab="menu-tab">PLAN</button>
+                <button class="tab-btn" data-tab="review-tab">REVIEW</button>
+                <button class="tab-btn" data-tab="settings-tab">SETTINGS</button>
             </div>
         </header>
 
@@ -45,35 +46,42 @@
                 <div class="card input-section">
                     <div class="exercise-selector">
                         <input type="radio" id="benchpress" name="exercise" value="benchpress" checked>
-                        <label for="benchpress" class="exercise-btn" data-color="#3b82f6">ベンチプレス</label>
+                        <label for="benchpress" class="exercise-btn" data-color="#3b82f6"
+                            style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Bench
+                            Press</label>
 
                         <input type="radio" id="deadlift" name="exercise" value="deadlift">
-                        <label for="deadlift" class="exercise-btn" data-color="#ef4444">デッドリフト</label>
+                        <label for="deadlift" class="exercise-btn" data-color="#ef4444"
+                            style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Deadlift</label>
 
                         <input type="radio" id="squat" name="exercise" value="squat">
-                        <label for="squat" class="exercise-btn" data-color="#10b981">スクワット</label>
+                        <label for="squat" class="exercise-btn" data-color="#10b981"
+                            style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Squat</label>
                     </div>
                     <div class="input-group">
-                        <label for="weight">持ち上げた重量 (kg)</label>
-                        <input type="number" id="weight" placeholder="例: 80" min="1" step="0.5">
+                        <label for="weight"
+                            style="text-transform: uppercase; font-size: 0.75rem; font-weight: 700;">Weight (kg)</label>
+                        <input type="number" id="weight" placeholder="e.g. 80" min="1" step="0.5">
                     </div>
                     <div class="input-group">
-                        <label for="reps">回数 (レップス)</label>
-                        <input type="number" id="reps" placeholder="例: 8" min="1" step="1">
+                        <label for="reps"
+                            style="text-transform: uppercase; font-size: 0.75rem; font-weight: 700;">Reps</label>
+                        <input type="number" id="reps" placeholder="e.g. 8" min="1" step="1">
                     </div>
-                    <button id="calculate-btn">計算する</button>
+                    <button id="calculate-btn"
+                        style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Calculate</button>
                 </div>
 
                 <div class="card records-section" id="records-section" style="margin-top: 1.5rem; display: none;">
                     <h2
-                        style="font-size: 1.1rem; margin-bottom: 1rem; color: #ffffff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; font-weight: 500; letter-spacing: 0.05em;">
-                        保存データからの自己ベスト (<span id="record-exercise-name">ベンチプレス</span>)</h2>
+                        style="font-size: 0.85rem; margin-bottom: 1rem; color: var(--text-secondary); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;">
+                        Personal Best from History (<span id="record-exercise-name">BENCH PRESS</span>)</h2>
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; border: 1px solid var(--border-color);">
                         <div style="text-align: center; flex: 1; border-right: 1px solid rgba(255,255,255,0.05);">
                             <div
                                 style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                最大挙上重量
+                                Max Weight
                             </div>
                             <div style="font-size: 1.3rem; font-weight: 700; color: #ffffff;" id="record-max-weight">--
                                 kg</div>
@@ -82,8 +90,8 @@
                         </div>
                         <div style="text-align: center; flex: 1;">
                             <div
-                                style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                推定1RM
+                                style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                                Est. 1RM
                                 (Max)</div>
                             <div style="font-size: 1.3rem; font-weight: 700; color: #ffffff;" id="record-max-1rm">-- kg
                             </div>
@@ -94,44 +102,57 @@
                 </div>
 
                 <div class="results-section hidden" id="results">
-                    <h2>推定 MAX重量 (1RM)</h2>
+                    <h2
+                        style="font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-primary); text-align: center; margin-bottom: 1.5rem;">
+                        Estimated 1RM</h2>
                     <div class="average-result">
-                        <span class="label">平均推定値</span>
+                        <span class="label"
+                            style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; font-size: 0.8rem;">Average
+                            Estimate</span>
                         <span class="value" id="average-1rm">-- kg</span>
                     </div>
 
                     <div class="formulas-grid">
                         <div class="formula-card">
-                            <span class="formula-name">Epley方式</span>
+                            <span class="formula-name"
+                                style="text-transform: uppercase; font-weight: 700; font-size: 0.7rem;">EPLEY</span>
                             <span class="formula-value" id="epley-1rm">-- kg</span>
                         </div>
                         <div class="formula-card">
-                            <span class="formula-name">Brzycki方式</span>
+                            <span class="formula-name"
+                                style="text-transform: uppercase; font-weight: 700; font-size: 0.7rem;">BRZYCKI</span>
                             <span class="formula-value" id="brzycki-1rm">-- kg</span>
                         </div>
                         <div class="formula-card">
-                            <span class="formula-name">O'Conner方式</span>
+                            <span class="formula-name"
+                                style="text-transform: uppercase; font-weight: 700; font-size: 0.7rem;">O'CONNER</span>
                             <span class="formula-value" id="oconner-1rm">-- kg</span>
                         </div>
                     </div>
 
                     <div class="training-guide">
-                        <h3>目的別 トレーニング重量目安</h3>
+                        <h3
+                            style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; color: var(--text-primary);">
+                            Recommended Training Weights</h3>
                         <ul class="guide-list">
                             <li>
-                                <span class="reps">3回 (約90% / 筋力UP)</span>
+                                <span class="reps" style="font-weight: 600; font-size: 0.85rem;">3 REPS (90% /
+                                    Strength)</span>
                                 <span class="weight" id="target-3rm">-- kg</span>
                             </li>
                             <li>
-                                <span class="reps">5回 (約87% / 筋力・筋肥大)</span>
+                                <span class="reps" style="font-weight: 600; font-size: 0.85rem;">5 REPS (87% /
+                                    Power)</span>
                                 <span class="weight" id="target-5rm">-- kg</span>
                             </li>
                             <li>
-                                <span class="reps">8回 (約80% / 筋肥大)</span>
+                                <span class="reps" style="font-weight: 600; font-size: 0.85rem;">8 REPS (80% /
+                                    Hypertrophy)</span>
                                 <span class="weight" id="target-8rm">-- kg</span>
                             </li>
                             <li>
-                                <span class="reps">10回 (約75% / 筋肥大・持久力)</span>
+                                <span class="reps" style="font-weight: 600; font-size: 0.85rem;">10 REPS (75% /
+                                    Endurance)</span>
                                 <span class="weight" id="target-10rm">-- kg</span>
                             </li>
                         </ul>
@@ -147,17 +168,17 @@
                     style="display: flex; justify-content: space-between; align-items: center; margin: 0 1rem 2rem 1rem; position: relative;">
                     <div class="progress-step active" id="indicator-step-1">
                         <div class="step-circle">1</div>
-                        <span class="step-label">日時</span>
+                        <span class="step-label">DATE</span>
                     </div>
                     <div class="progress-line"></div>
                     <div class="progress-step" id="indicator-step-2">
                         <div class="step-circle">2</div>
-                        <span class="step-label">方法</span>
+                        <span class="step-label">METHOD</span>
                     </div>
                     <div class="progress-line"></div>
                     <div class="progress-step" id="indicator-step-3">
                         <div class="step-circle">3</div>
-                        <span class="step-label">構築</span>
+                        <span class="step-label">PLAN</span>
                     </div>
                 </div>
 
@@ -165,16 +186,18 @@
                 <div id="wizard-step-1" class="wizard-step">
                     <div class="card date-section" style="margin-bottom: 1.5rem;">
                         <h2
-                            style="font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-primary); text-align: center; font-weight: 600;">
-                            1. 記録する日時を選択</h2>
+                            style="font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-primary); text-align: center; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
+                            1. Select Date</h2>
                         <div class="input-row" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
                             <div class="input-group" style="flex: 1; margin-bottom: 0;">
-                                <label for="workout-date">日付</label>
+                                <label for="workout-date"
+                                    style="text-transform: uppercase; font-size: 0.75rem; font-weight: 700;">Date</label>
                                 <input type="date" id="workout-date" style="cursor: pointer;">
                             </div>
                         </div>
                         <button id="step1-next-btn"
-                            style="background: var(--text-primary); color: #000000; font-weight: 700;">次へ進む</button>
+                            style="background: var(--text-primary); color: #000000; font-weight: 700;">NEXT
+                            STEP</button>
                     </div>
                 </div>
 
@@ -182,39 +205,39 @@
                 <div id="wizard-step-2" class="wizard-step" style="display: none;">
                     <div class="card" style="margin-bottom: 1.5rem;">
                         <h2
-                            style="font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-primary); text-align: center; font-weight: 600;">
-                            2. メニューの作成方法</h2>
+                            style="font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-primary); text-align: center; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
+                            2. Selection Method</h2>
 
                         <div
                             style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
                             <label for="copy-date-select"
-                                style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.95rem;">A.
-                                過去の記録からコピーして始める</label>
+                                style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">A.
+                                Copy from Past Record</label>
                             <div style="display: flex; gap: 0.5rem; align-items: stretch;">
                                 <select id="copy-date-select" class="input-group"
                                     style="margin-bottom: 0; flex: 2; cursor: pointer; padding: 0.8rem;">
-                                    <option value="" disabled selected>日付を選択</option>
-                                    <!-- JSで動的に追加される -->
+                                    <option value="" disabled selected>Select Date</option>
+                                    <!-- Dynamic -->
                                 </select>
                                 <button id="copy-menu-btn"
-                                    style="flex: 1; margin: 0; padding: 0.8rem; background: var(--text-primary); color: #000000;">コピー</button>
+                                    style="flex: 1; margin: 0; padding: 0.8rem; background: var(--text-primary); color: #000000;">COPY</button>
                             </div>
                         </div>
 
                         <div style="text-align: center; margin-bottom: 2rem; position: relative;">
                             <hr style="border-color: rgba(255,255,255,0.1); margin: 0;">
                             <span
-                                style="position: absolute; top: -0.8rem; left: 50%; transform: translateX(-50%); background: var(--card-bg); padding: 0 1rem; color: var(--text-secondary); font-size: 0.85rem;">または</span>
+                                style="position: absolute; top: -0.8rem; left: 50%; transform: translateX(-50%); background: #0a0a0a; padding: 0 1rem; color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">OR</span>
                         </div>
 
                         <div style="margin-bottom: 1.5rem; text-align: center;">
                             <button id="step2-new-btn"
                                 style="background: transparent; border: 1px solid var(--text-primary); color: var(--text-primary); padding: 1rem;">B.
-                                新しくメニューを作る</button>
+                                Create New Plan</button>
                         </div>
 
-                        <button id="step2-back-btn" class="btn-secondary" style="border: none; padding: 0.5rem;">←
-                            戻る</button>
+                        <button id="step2-back-btn" class="btn-secondary"
+                            style="border: none; padding: 0.5rem; font-size: 0.8rem;">← BACK</button>
                     </div>
                 </div>
 
@@ -222,164 +245,208 @@
                 <div id="wizard-step-3" class="wizard-step" style="display: none;">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h2 style="font-size: 1.1rem; color: var(--text-primary); font-weight: 600;">3. メニュー編集</h2>
+                        <h2
+                            style="font-size: 1.1rem; color: var(--text-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
+                            3. Design Plan</h2>
                         <button id="step3-back-btn"
-                            style="background: transparent; border: none; color: var(--text-secondary); padding: 0; width: auto; font-size: 0.9rem; margin: 0; box-shadow: none;">変更方法を選び直す</button>
+                            style="background: transparent; border: none; color: var(--text-secondary); padding: 0; width: auto; font-size: 0.75rem; text-transform: uppercase; margin: 0; box-shadow: none; font-weight: 700;">Change
+                            Method</button>
                     </div>
 
                     <div class="card input-section">
                         <div class="input-group">
-                            <label for="category-filter">部位フィルター</label>
-                            <select id="category-filter" style="margin-bottom: 1rem;">
-                                <option value="オール" selected>すべての部位</option>
-                                <option value="胸（Chest）">胸（Chest）</option>
-                                <option value="背中（Back）">背中（Back）</option>
-                                <option value="足（Legs）">足（Legs）</option>
-                                <option value="肩（Shoulders）">肩（Shoulders）</option>
-                                <option value="上腕二頭筋（Biceps）">上腕二頭筋（Biceps）</option>
-                                <option value="上腕三頭筋（Triceps）">上腕三頭筋（Triceps）</option>
+                            <label for="category-filter"
+                                style="text-transform: uppercase; font-size: 0.75rem; font-weight: 700;">Body
+                                Part</label>
+                            <select id="category-filter" class="hidden">
+                                <option value="オール" selected>All Categories</option>
+                                <option value="胸（Chest）">Chest</option>
+                                <option value="背中（Back）">Back</option>
+                                <option value="足（Legs）">Legs</option>
+                                <option value="肩（Shoulders）">Shoulders</option>
+                                <option value="上腕二頭筋（Biceps）">Biceps</option>
+                                <option value="上腕三頭筋（Triceps）">Triceps</option>
                             </select>
-                            <label for="menu-exercise">種目名</label>
-                            <select id="menu-exercise" class="exercise-select">
-                                <option value="" disabled selected>種目を選択してください</option>
+                            <div class="category-filter-btn" id="category-filter-btn" style="margin-bottom: 1rem;">
+                                <span id="category-filter-label">All Categories</span>
+                                <span class="category-filter-arrow">▼</span>
+                            </div>
+                            <label for="menu-exercise"
+                                style="text-transform: uppercase; font-size: 0.75rem; font-weight: 700;">Exercise
+                                Name</label>
+                            <div class="custom-select" id="custom-menu-exercise" style="display:none;">
+                                <select id="menu-exercise" class="exercise-select hidden">
+                                    <option value="" disabled selected>Select Exercise</option>
 
-                                <optgroup label="胸（Chest）">
-                                    <option value="ベンチプレス">ベンチプレス</option>
-                                    <option value="インクライン・ベンチプレス">インクライン・ベンチプレス</option>
-                                    <option value="デクライン・ベンチプレス">デクライン・ベンチプレス</option>
-                                    <option value="ダンベル・ベンチプレス">ダンベル・ベンチプレス</option>
-                                    <option value="インクライン・ダンベルプレス">インクライン・ダンベルプレス</option>
-                                    <option value="デクライン・ダンベルプレス">デクライン・ダンベルプレス</option>
-                                    <option value="ダンベル・フライ">ダンベル・フライ</option>
-                                    <option value="インクライン・ダンベルフライ">インクライン・ダンベルフライ</option>
-                                    <option value="ダンベル・プルオーバー">ダンベル・プルオーバー</option>
-                                    <option value="チェストプレス（マシン）">チェストプレス（マシン）</option>
-                                    <option value="ペックデック・フライ">ペックデック・フライ</option>
-                                    <option value="ケーブル・クロスオーバー">ケーブル・クロスオーバー</option>
-                                    <option value="スミスマシン・ベンチプレス">スミスマシン・ベンチプレス</option>
-                                    <option value="ディップス">ディップス</option>
-                                    <option value="マシン・ケーブル（胸）">マシン・ケーブル（胸）</option>
-                                </optgroup>
+                                    <optgroup label="胸（Chest）">
+                                        <option value="ベンチプレス">ベンチプレス</option>
+                                        <option value="インクライン・ベンチプレス">インクライン・ベンチプレス</option>
+                                        <option value="デクライン・ベンチプレス">デクライン・ベンチプレス</option>
+                                        <option value="ダンベル・ベンチプレス">ダンベル・ベンチプレス</option>
+                                        <option value="インクライン・ダンベルプレス">インクライン・ダンベルプレス</option>
+                                        <option value="デクライン・ダンベルプレス">デクライン・ダンベルプレス</option>
+                                        <option value="ダンベル・フライ">ダンベル・フライ</option>
+                                        <option value="インクライン・ダンベルフライ">インクライン・ダンベルフライ</option>
+                                        <option value="ダンベル・プルオーバー">ダンベル・プルオーバー</option>
+                                        <option value="チェストプレス（マシン）">チェストプレス（マシン）</option>
+                                        <option value="ペックデック・フライ">ペックデック・フライ</option>
+                                        <option value="ケーブル・クロスオーバー">ケーブル・クロスオーバー</option>
+                                        <option value="スミスマシン・ベンチプレス">スミスマシン・ベンチプレス</option>
+                                        <option value="ディップス">ディップス</option>
+                                        <option value="マシン・ケーブル（胸）">マシン・ケーブル（胸）</option>
+                                    </optgroup>
 
-                                <optgroup label="背中（Back）">
-                                    <option value="デッドリフト">デッドリフト</option>
-                                    <option value="ベントオーバー・ロウ（バーベルロウ）">ベントオーバー・ロウ（バーベルロウ）</option>
-                                    <option value="ペンドレイ・ロウ">ペンドレイ・ロウ</option>
-                                    <option value="Tバー・ロウ">Tバー・ロウ</option>
-                                    <option value="ワンアーム・ダンベルロウ">ワンアーム・ダンベルロウ</option>
-                                    <option value="ラットプルダウン">ラットプルダウン</option>
-                                    <option value="シーテッド・ケーブルロウ">シーテッド・ケーブルロウ</option>
-                                    <option value="ストレートアーム・プルダウン">ストレートアーム・プルダウン</option>
-                                    <option value="マシン・ロウ">マシン・ロウ</option>
-                                    <option value="チンニング（懸垂）">チンニング（懸垂）</option>
-                                </optgroup>
+                                    <optgroup label="背中（Back）">
+                                        <option value="デッドリフト">デッドリフト</option>
+                                        <option value="ベントオーバー・ロウ（バーベルロウ）">ベントオーバー・ロウ（バーベルロウ）</option>
+                                        <option value="ペンドレイ・ロウ">ペンドレイ・ロウ</option>
+                                        <option value="Tバー・ロウ">Tバー・ロウ</option>
+                                        <option value="ワンアーム・ダンベルロウ">ワンアーム・ダンベルロウ</option>
+                                        <option value="ラットプルダウン">ラットプルダウン</option>
+                                        <option value="シーテッド・ケーブルロウ">シーテッド・ケーブルロウ</option>
+                                        <option value="ストレートアーム・プルダウン">ストレートアーム・プルダウン</option>
+                                        <option value="マシン・ロウ">マシン・ロウ</option>
+                                        <option value="チンニング（懸垂）">チンニング（懸垂）</option>
+                                    </optgroup>
 
-                                <optgroup label="足（Legs）">
-                                    <option value="スクワット（バックスクワット）">スクワット（バックスクワット）</option>
-                                    <option value="フロント・スクワット">フロント・スクワット</option>
-                                    <option value="ルーマニアン・デッドリフト（RDL）">ルーマニアン・デッドリフト（RDL）</option>
-                                    <option value="スティフレッグド・デッドリフト">スティフレッグド・デッドリフト</option>
-                                    <option value="ブルガリアン・スクワット">ブルガリアン・スクワット</option>
-                                    <option value="レッグプレス">レッグプレス</option>
-                                    <option value="ハックスクワット（マシン）">ハックスクワット（マシン）</option>
-                                    <option value="レッグ・エクステンション">レッグ・エクステンション</option>
-                                    <option value="レッグ・カール（シーテッド／ライイング）">レッグ・カール（シーテッド／ライイング）</option>
-                                    <option value="ヒップ・スラスト">ヒップ・スラスト</option>
-                                    <option value="ケーブル・プルスルー">ケーブル・プルスルー</option>
-                                    <option value="カーフレイズ（スタンディング／シーテッド）">カーフレイズ（スタンディング／シーテッド）</option>
-                                </optgroup>
+                                    <optgroup label="足（Legs）">
+                                        <option value="スクワット（バックスクワット）">スクワット（バックスクワット）</option>
+                                        <option value="フロント・スクワット">フロント・スクワット</option>
+                                        <option value="ルーマニアン・デッドリフト（RDL）">ルーマニアン・デッドリフト（RDL）</option>
+                                        <option value="スティフレッグド・デッドリフト">スティフレッグド・デッドリフト</option>
+                                        <option value="ブルガリアン・スクワット">ブルガリアン・スクワット</option>
+                                        <option value="レッグプレス">レッグプレス</option>
+                                        <option value="ハックスクワット（マシン）">ハックスクワット（マシン）</option>
+                                        <option value="レッグ・エクステンション">レッグ・エクステンション</option>
+                                        <option value="レッグ・カール（シーテッド／ライイング）">レッグ・カール（シーテッド／ライイング）</option>
+                                        <option value="ヒップ・スラスト">ヒップ・スラスト</option>
+                                        <option value="ケーブル・プルスルー">ケーブル・プルスルー</option>
+                                        <option value="カーフレイズ（スタンディング／シーテッド）">カーフレイズ（スタンディング／シーテッド）</option>
+                                    </optgroup>
 
-                                <optgroup label="肩（Shoulders）">
-                                    <option value="オーバーヘッドプレス（ミリタリープレス）">オーバーヘッドプレス（ミリタリープレス）</option>
-                                    <option value="アップライト・ロウ">アップライト・ロウ</option>
-                                    <option value="バーベル・シュラッグ">バーベル・シュラッグ</option>
-                                    <option value="ダンベル・ショルダープレス">ダンベル・ショルダープレス</option>
-                                    <option value="アーノルド・プレス">アーノルド・プレス</option>
-                                    <option value="サイドレイズ">サイドレイズ</option>
-                                    <option value="フロントレイズ">フロントレイズ</option>
-                                    <option value="リアレイズ（リアデルト・フライ）">リアレイズ（リアデルト・フライ）</option>
-                                    <option value="ダンベル・シュラッグ">ダンベル・シュラッグ</option>
-                                    <option value="マシン・ショルダープレス">マシン・ショルダープレス</option>
-                                    <option value="ケーブル・サイドレイズ">ケーブル・サイドレイズ</option>
-                                    <option value="ケーブル・フロントレイズ">ケーブル・フロントレイズ</option>
-                                    <option value="フェイスプル">フェイスプル</option>
-                                    <option value="リアデルト・マシン（リバース・ペックデック）">リアデルト・マシン（リバース・ペックデック）</option>
-                                    <option value="スミスマシン・ショルダープレス">スミスマシン・ショルダープレス</option>
-                                    <option value="マシン・ケーブル（肩）">マシン・ケーブル（肩）</option>
-                                </optgroup>
+                                    <optgroup label="肩（Shoulders）">
+                                        <option value="オーバーヘッドプレス（ミリタリープレス）">オーバーヘッドプレス（ミリタリープレス）</option>
+                                        <option value="アップライト・ロウ">アップライト・ロウ</option>
+                                        <option value="バーベル・シュラッグ">バーベル・シュラッグ</option>
+                                        <option value="ダンベル・ショルダープレス">ダンベル・ショルダープレス</option>
+                                        <option value="アーノルド・プレス">アーノルド・プレス</option>
+                                        <option value="サイドレイズ">サイドレイズ</option>
+                                        <option value="フロントレイズ">フロントレイズ</option>
+                                        <option value="リアレイズ（リアデルト・フライ）">リアレイズ（リアデルト・フライ）</option>
+                                        <option value="ダンベル・シュラッグ">ダンベル・シュラッグ</option>
+                                        <option value="マシン・ショルダープレス">マシン・ショルダープレス</option>
+                                        <option value="ケーブル・サイドレイズ">ケーブル・サイドレイズ</option>
+                                        <option value="ケーブル・フロントレイズ">ケーブル・フロントレイズ</option>
+                                        <option value="フェイスプル">フェイスプル</option>
+                                        <option value="リアデルト・マシン（リバース・ペックデック）">リアデルト・マシン（リバース・ペックデック）</option>
+                                        <option value="スミスマシン・ショルダープレス">スミスマシン・ショルダープレス</option>
+                                        <option value="マシン・ケーブル（肩）">マシン・ケーブル（肩）</option>
+                                    </optgroup>
 
-                                <optgroup label="上腕二頭筋（Biceps）">
-                                    <option value="バーベル・カール">バーベル・カール</option>
-                                    <option value="EZバー・カール">EZバー・カール</option>
-                                    <option value="プリーチャー・カール">プリーチャー・カール</option>
-                                    <option value="ダンベル・カール">ダンベル・カール</option>
-                                    <option value="ハンマー・カール">ハンマー・カール</option>
-                                    <option value="インクライン・ダンベルカール">インクライン・ダンベルカール</option>
-                                    <option value="コンセントレーション・カール">コンセントレーション・カール</option>
-                                    <option value="スパイダー・カール">スパイダー・カール</option>
-                                    <option value="ケーブル・カール">ケーブル・カール</option>
-                                    <option value="マシン・プリーチャーカール">マシン・プリーチャーカール</option>
-                                    <option value="マシン・ケーブル（上腕二頭筋）">マシン・ケーブル（上腕二頭筋）</option>
-                                </optgroup>
+                                    <optgroup label="上腕二頭筋（Biceps）">
+                                        <option value="バーベル・カール">バーベル・カール</option>
+                                        <option value="EZバー・カール">EZバー・カール</option>
+                                        <option value="プリーチャー・カール">プリーチャー・カール</option>
+                                        <option value="ダンベル・カール">ダンベル・カール</option>
+                                        <option value="ハンマー・カール">ハンマー・カール</option>
+                                        <option value="インクライン・ダンベルカール">インクライン・ダンベルカール</option>
+                                        <option value="コンセントレーション・カール">コンセントレーション・カール</option>
+                                        <option value="スパイダー・カール">スパイダー・カール</option>
+                                        <option value="ケーブル・カール">ケーブル・カール</option>
+                                        <option value="マシン・プリーチャーカール">マシン・プリーチャーカール</option>
+                                        <option value="マシン・ケーブル（上腕二頭筋）">マシン・ケーブル（上腕二頭筋）</option>
+                                    </optgroup>
 
-                                <optgroup label="上腕三頭筋（Triceps）">
-                                    <option value="ナローグリップ・ベンチプレス">ナローグリップ・ベンチプレス</option>
-                                    <option value="スカルクラッシャー（ライイング・トライセプス・エクステンション）">スカルクラッシャー（ライイング・トライセプス・エクステンション）
-                                    </option>
-                                    <option value="フレンチ・プレス">フレンチ・プレス</option>
-                                    <option value="JMプレス">JMプレス</option>
-                                    <option value="ダンベル・トライセプス・エクステンション">ダンベル・トライセプス・エクステンション</option>
-                                    <option value="ダンベル・キックバック">ダンベル・キックバック</option>
-                                    <option value="トライセプス・プッシュダウン（ストレートバー／ロープ／Vバー）">トライセプス・プッシュダウン（ストレートバー／ロープ／Vバー）
-                                    </option>
-                                    <option value="オーバーヘッド・ケーブル・エクステンション">オーバーヘッド・ケーブル・エクステンション</option>
-                                    <option value="マシン・ケーブル（上腕三頭筋）">マシン・ケーブル（上腕三頭筋）</option>
-                                </optgroup>
-                            </select>
+                                    <optgroup label="上腕三頭筋（Triceps）">
+                                        <option value="ナローグリップ・ベンチプレス">ナローグリップ・ベンチプレス</option>
+                                        <option value="スカルクラッシャー（ライイング・トライセプス・エクステンション）">
+                                            スカルクラッシャー（ライイング・トライセプス・エクステンション）</option>
+                                        <option value="フレンチ・プレス">フレンチ・プレス</option>
+                                        <option value="JMプレス">JMプレス</option>
+                                        <option value="ダンベル・トライセプス・エクステンション">ダンベル・トライセプス・エクステンション</option>
+                                        <option value="ダンベル・キックバック">ダンベル・キックバック</option>
+                                        <option value="トライセプス・プッシュダウン（ストレートバー／ロープ／Vバー）">トライセプス・プッシュダウン（ストレートバー／ロープ／Vバー）
+                                        </option>
+                                        <option value="オーバーヘッド・ケーブル・エクステンション">オーバーヘッド・ケーブル・エクステンション</option>
+                                        <option value="マシン・ケーブル（上腕三頭筋）">マシン・ケーブル（上腕三頭筋）</option>
+                                    </optgroup>
+                                </select>
+                                <div class="select-selected">種目を選択してください</div>
+                                <div class="select-items select-hide"></div>
+                            </div>
+                            <div class="category-filter-btn" id="exercise-select-btn">
+                                <span id="exercise-select-label">種目を選択してください</span>
+                                <span class="category-filter-arrow">▼</span>
+                            </div>
 
                             <div id="custom-exercise-container" class="hidden"
                                 style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
                                 <input type="text" id="custom-exercise"
-                                    style="width: 100%; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 1.1rem; appearance: none; -webkit-appearance: none;"
-                                    placeholder="新しい種目名を入力">
+                                    style="width: 100%; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); color: var(--text-primary); font-size: 1.1rem; appearance: none; -webkit-appearance: none;"
+                                    placeholder="Enter new exercise name">
                             </div>
                         </div>
-                        <button id="add-menu-btn" style="margin-top: 1rem;">今日のメニューに登録</button>
+                        <button id="add-menu-btn" style="margin-top: 1rem; font-weight: 700;">ADD TO PLAN</button>
                     </div>
 
                     <div class="card menu-list-section">
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                            <h2 id="menu-list-title" style="margin: 0;">今日のメニュー</h2>
+                            <h2 id="menu-list-title"
+                                style="margin: 0; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
+                                Today's Menu</h2>
                             <div
                                 style="display: flex; align-items: center; gap: 0.5rem; background: rgba(0,0,0,0.5); padding: 0.3rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color);">
-                                <span style="font-size: 0.8rem; color: var(--text-secondary);">⏱️ 休憩</span>
-                                <select id="rest-timer-duration"
-                                    style="background: transparent; color: var(--text-primary); border: none; outline: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; padding-left: 0.2rem;">
-                                    <option value="60">1分</option>
-                                    <option value="90" selected>1分30秒</option>
-                                    <option value="120">2分</option>
-                                    <option value="150">2分30秒</option>
-                                    <option value="180">3分</option>
-                                    <option value="240">4分</option>
-                                    <option value="300">5分</option>
-                                </select>
+                                <span
+                                    style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">REST</span>
+                                <div class="custom-select rest-timer-custom" id="custom-rest-timer">
+                                    <select id="rest-timer-duration" class="hidden">
+                                        <option value="60">1分</option>
+                                        <option value="90" selected>1分30秒</option>
+                                        <option value="120">2分</option>
+                                        <option value="150">2分30秒</option>
+                                        <option value="180">3分</option>
+                                        <option value="240">4分</option>
+                                        <option value="300">5分</option>
+                                    </select>
+                                    <div class="select-selected"
+                                        style="font-size: 0.85rem; font-weight: 600; padding: 0.2rem 1.5rem 0.2rem 0.5rem;">
+                                        1分30秒</div>
+                                    <div class="select-items select-hide">
+                                        <div data-value="60">1分</div>
+                                        <div data-value="90" class="same-as-selected">1分30秒</div>
+                                        <div data-value="120">2分</div>
+                                        <div data-value="150">2分30秒</div>
+                                        <div data-value="180">3分</div>
+                                        <div data-value="240">4分</div>
+                                        <div data-value="300">5分</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div
                             style="display: flex; justify-content: space-around; margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); padding: 1.2rem 1rem; border: 1px solid var(--border-color); border-radius: 0;">
                             <div id="total-volume-display" style="text-align: center;">
                                 <span
-                                    style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; letter-spacing: 0.05em;">合計ボリューム</span>
+                                    style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; letter-spacing: 0.1em; text-transform: uppercase;">Total
+                                    Volume</span>
                                 <span id="total-volume-value"
                                     style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums;">0
                                     <span
                                         style="font-size: 1rem; font-weight: 400; color: var(--text-secondary);">kg</span></span>
                             </div>
                             <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
+                            <div style="text-align: center;">
+                                <span
+                                    style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; letter-spacing: 0.1em; text-transform: uppercase;">Total
+                                    Sets</span>
+                                <span id="total-sets-value"
+                                    style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums;">0</span>
+                            </div>
+                            <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
                             <div id="workout-timer-display" style="text-align: center;">
                                 <span
-                                    style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; letter-spacing: 0.05em;">経過時間</span>
+                                    style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; letter-spacing: 0.1em; text-transform: uppercase;">Duration</span>
                                 <span id="workout-timer-value"
                                     style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums;">00:00:00</span>
                             </div>
@@ -390,8 +457,9 @@
                         </ul>
                         <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
                             <button id="save-menu-btn"
-                                style="flex: 2; border: none; font-weight: bold; background: var(--text-primary); color: #000000;">保存</button>
-                            <button id="clear-menu-btn" class="btn-secondary" style="flex: 1;">全クリア</button>
+                                style="flex: 2; border: none; font-weight: bold; background: var(--text-primary); color: #000000; padding: 0.8rem 0;">SAVE</button>
+                            <button id="clear-menu-btn" class="btn-secondary" style="flex: 1; padding: 0.8rem 0;">CLEAR
+                                ALL</button>
                         </div>
                     </div>
                 </div>
@@ -422,7 +490,8 @@
                         style="display: flex; justify-content: space-around; margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); padding: 1.2rem 1rem; border: 1px solid var(--border-color); border-radius: 0;">
                         <div style="text-align: center;">
                             <span
-                                style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; letter-spacing: 0.05em;">合計ボリューム</span>
+                                style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; letter-spacing: 0.1em; text-transform: uppercase;">Total
+                                Volume</span>
                             <span id="review-total-volume"
                                 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums;">0
                                 <span
@@ -431,7 +500,15 @@
                         <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
                         <div style="text-align: center;">
                             <span
-                                style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; letter-spacing: 0.05em;">所要時間</span>
+                                style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; letter-spacing: 0.1em; text-transform: uppercase;">Total
+                                Sets</span>
+                            <span id="review-total-sets"
+                                style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums;">0</span>
+                        </div>
+                        <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
+                        <div style="text-align: center;">
+                            <span
+                                style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; letter-spacing: 0.1em; text-transform: uppercase;">Duration</span>
                             <span id="review-duration"
                                 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums;">--:--:--</span>
                         </div>
@@ -447,33 +524,40 @@
             <div id="settings-tab" class="tab-content hidden">
                 <div class="card" style="margin-bottom: 1.5rem;">
                     <h2
-                        style="font-size: 1.1rem; margin-bottom: 2rem; color: var(--text-primary); text-align: center; font-weight: 600;">
-                        データ管理・バックアップ
+                        style="font-size: 1.1rem; margin-bottom: 2rem; color: var(--text-primary); text-align: center; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">
+                        Data Management
                     </h2>
 
                     <div
                         style="margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border-color);">
-                        <h3 style="font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem;">データをバックアップ
-                            (エクスポート)</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
-                            現在のすべてのトレーニング記録と設定を、1つのJSONファイルとして端末にダウンロード保存します。機種変更前などに実行してください。
+                        <h3
+                            style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-primary); margin-bottom: 0.5rem; letter-spacing: 0.05em;">
+                            Export Data</h3>
+                        <p
+                            style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.5;">
+                            Download all your training history and settings as a JSON file. Use this for backups or
+                            before switching devices.
                         </p>
                         <button id="export-data-btn" class="modal-btn"
-                            style="width: 100%; border: 1px solid var(--text-primary);">
-                            📥 バックアップファイルを保存
+                            style="width: 100%; border: 1px solid var(--text-primary); font-weight: 700;">
+                            📥 SAVE BACKUP FILE
                         </button>
                     </div>
 
                     <div>
-                        <h3 style="font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem;">データを復元
-                            (インポート)</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
-                            保存しておいたバックアップファイル(JSON)を選択して、以前の記録を復元します。（既存のデータに上書き保存、または結合して追加するかを選べます）
+                        <h3
+                            style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-primary); margin-bottom: 0.5rem; letter-spacing: 0.05em;">
+                            Import Data</h3>
+                        <p
+                            style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.5;">
+                            Restore your previous records from a backup file (JSON). You can choose to overwrite or
+                            merge with current data.
                         </p>
 
-                        <input type="file" id="import-file-input" accept=".json, application/json, text/plain, */*" style="display: none;">
-                        <button id="import-data-btn" class="btn-secondary" style="width: 100%;">
-                            📤 バックアップファイルを読み込む
+                        <input type="file" id="import-file-input" accept=".json, application/json, text/plain, */*"
+                            style="display: none;">
+                        <button id="import-data-btn" class="btn-secondary" style="width: 100%; font-weight: 700;">
+                            📤 LOAD BACKUP FILE
                         </button>
                     </div>
                 </div>
@@ -484,10 +568,11 @@
     <!-- Custom Alert Modal -->
     <div id="custom-alert-modal" class="modal-overlay hidden">
         <div class="modal-content">
-            <h3 class="modal-title">未完了のメニューがあります</h3>
-            <p class="modal-message">以下の種目に未完了のセットがあります。<br>完了にしてから保存してください。</p>
+            <h3 class="modal-title" style="text-transform: uppercase; letter-spacing: 0.05em;">Unfinished Exercises</h3>
+            <p class="modal-message">The following exercises have incomplete sets. Please mark them as "DONE" before
+                saving.</p>
             <ul id="modal-uncompleted-list" class="modal-list"></ul>
-            <button id="modal-close-btn" class="modal-btn">確認</button>
+            <button id="modal-close-btn" class="modal-btn" style="font-weight: 700;">OK</button>
         </div>
     </div>
 
@@ -496,7 +581,39 @@
         <div class="rest-timer-content">
             <span class="rest-timer-label">REST</span>
             <span id="rest-timer-display" class="rest-timer-time">01:30</span>
-            <button id="rest-timer-skip-btn" class="rest-timer-btn">スキップ</button>
+            <button id="rest-timer-skip-btn" class="rest-timer-btn">SKIP</button>
+        </div>
+    </div>
+
+    <!-- Category Filter Fullscreen Modal -->
+    <div id="category-filter-modal" class="category-modal-overlay hidden">
+        <div class="category-modal-content">
+            <div class="category-modal-header">
+                <h3 style="text-transform: uppercase; letter-spacing: 0.05em;">Select Category</h3>
+                <button class="category-modal-close" id="category-modal-close">✕</button>
+            </div>
+            <div class="category-modal-list" id="category-modal-list" style="padding: 1rem 0;">
+                <div class="category-modal-item selected" data-value="オール">ALL CATEGORIES</div>
+                <div class="category-modal-item" data-value="胸（Chest）">CHEST</div>
+                <div class="category-modal-item" data-value="背中（Back）">BACK</div>
+                <div class="category-modal-item" data-value="足（Legs）">LEGS</div>
+                <div class="category-modal-item" data-value="肩（Shoulders）">SHOULDERS</div>
+                <div class="category-modal-item" data-value="上腕二頭筋（Biceps）">BICEPS</div>
+                <div class="category-modal-item" data-value="上腕三頭筋（Triceps）">TRICEPS</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exercise Select Fullscreen Modal -->
+    <div id="exercise-select-modal" class="category-modal-overlay hidden">
+        <div class="category-modal-content">
+            <div class="category-modal-header">
+                <h3 style="text-transform: uppercase; letter-spacing: 0.05em;">Select Exercise</h3>
+                <button class="category-modal-close" id="exercise-modal-close">✕</button>
+            </div>
+            <div class="category-modal-list" id="exercise-modal-list">
+                <!-- Populated dynamically by JS -->
+            </div>
         </div>
     </div>
 

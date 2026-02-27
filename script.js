@@ -339,10 +339,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateListTitle() {
         const selectedDate = getCurrentDate();
         if (selectedDate === todayStr) {
-            menuListTitle.textContent = "今日のメニュー";
+            menuListTitle.textContent = "TODAY'S MENU";
         } else {
             const [y, m, d] = selectedDate.split('-');
-            menuListTitle.textContent = `${y}年${parseInt(m)}月${parseInt(d)}日のメニュー`;
+            menuListTitle.textContent = `WORKOUT ON ${y}/${parseInt(m)}/${parseInt(d)}`;
         }
     }
 
@@ -427,15 +427,29 @@ document.addEventListener('DOMContentLoaded', () => {
             menuExerciseSelect.appendChild(defaultExerciseOption.cloneNode(true));
         }
 
+        const customSelectContainer = document.getElementById('custom-menu-exercise');
+        const customItemsDiv = customSelectContainer ? customSelectContainer.querySelector('.select-items') : null;
+        let customHtml = '';
+
+        // Add default placeholder to custom UI
+        if (defaultExerciseOption) {
+            customHtml += `<div data-value="" class="same-as-selected">${defaultExerciseOption.textContent}</div>`;
+        }
+
         originalOptgroups.forEach(group => {
             if (filterValue === 'all' || group.label === filterValue) {
                 const optgroupEl = document.createElement('optgroup');
                 optgroupEl.label = group.label;
+
+                customHtml += `<div class="optgroup-label" style="padding: 8px 16px; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; cursor: default;">${group.label}</div>`;
+
                 group.options.forEach(opt => {
                     const optionEl = document.createElement('option');
                     optionEl.value = opt.value;
                     optionEl.textContent = opt.text;
                     optgroupEl.appendChild(optionEl);
+
+                    customHtml += `<div data-value="${opt.value}">${opt.text}</div>`;
                 });
                 menuExerciseSelect.appendChild(optgroupEl);
             }
@@ -449,9 +463,47 @@ document.addEventListener('DOMContentLoaded', () => {
             optionEl.textContent = 'その他...';
             optgroupEl.appendChild(optionEl);
             menuExerciseSelect.appendChild(optgroupEl);
+
+            customHtml += `<div class="optgroup-label" style="padding: 8px 16px; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; cursor: default;">新しい種目を追加</div>`;
+            customHtml += `<div data-value="その他（自由入力）">その他...</div>`;
         }
 
         menuExerciseSelect.selectedIndex = 0;
+
+        // Update custom select UI (hidden, kept for compatibility)
+        if (customSelectContainer && customItemsDiv) {
+            customItemsDiv.innerHTML = customHtml;
+            const selectedDiv = customSelectContainer.querySelector('.select-selected');
+            if (selectedDiv) {
+                selectedDiv.innerHTML = "種目を選択してください";
+            }
+        }
+
+        // Update exercise modal list
+        const exerciseModalList = document.getElementById('exercise-modal-list');
+        if (exerciseModalList) {
+            let modalHtml = '';
+            originalOptgroups.forEach(group => {
+                if (filterValue === 'all' || group.label === filterValue) {
+                    modalHtml += `<div class="category-modal-group-label">${group.label}</div>`;
+                    group.options.forEach(opt => {
+                        modalHtml += `<div class="category-modal-item" data-value="${opt.value}">${opt.text}</div>`;
+                    });
+                }
+            });
+            if (filterValue !== 'all' && filterValue !== 'その他') {
+                modalHtml += `<div class="category-modal-group-label">新しい種目を追加</div>`;
+                modalHtml += `<div class="category-modal-item" data-value="その他（自由入力）">その他...</div>`;
+            }
+            exerciseModalList.innerHTML = modalHtml;
+        }
+
+        // Reset exercise button label
+        const exerciseSelectLabel = document.getElementById('exercise-select-label');
+        if (exerciseSelectLabel) {
+            exerciseSelectLabel.textContent = '種目を選択してください';
+        }
+
         customExerciseContainer.classList.add('hidden');
         customExerciseInput.value = '';
     }
@@ -489,12 +541,15 @@ document.addEventListener('DOMContentLoaded', () => {
         workoutMenuList.innerHTML = '';
         const dailyMenu = getDailyMenu();
         let totalVolume = 0;
+        let totalSets = 0;
 
         if (dailyMenu.length === 0) {
             workoutMenuList.innerHTML = '<li class="empty-message">メニューが登録されていません</li>';
             if (totalVolumeDisplay) {
                 totalVolumeDisplay.innerHTML = `0 <span style="font-size: 1rem; font-weight: 400; color: var(--text-secondary);">kg</span>`;
             }
+            const totalSetsDisplay = document.getElementById('total-sets-value');
+            if (totalSetsDisplay) totalSetsDisplay.textContent = '0';
             return;
         }
 
@@ -505,6 +560,9 @@ document.addEventListener('DOMContentLoaded', () => {
             li.style.alignItems = 'stretch';
 
             let exerciseVolume = 0;
+            totalSets += item.sets.length;
+
+            // Generate set rows HTML
             let setsHtml = '';
             item.sets.forEach((set, setIndex) => {
                 const isCompleted = set.completed ? 'completed' : '';
@@ -518,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     totalVolume += weight * reps;
                 }
 
-                const rpe = set.rpe !== undefined ? set.rpe : ''; 
+                const rpe = set.rpe !== undefined ? set.rpe : '';
                 const rpeOptions = ['-', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(val => {
                     const valueAttr = val === '-' ? '' : val;
                     const isSelected = rpe == valueAttr ? 'selected' : '';
@@ -529,15 +587,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="set-row ${isCompleted}" data-ex-idx="${exerciseIndex}" data-set-idx="${setIndex}">
                         <span class="set-number">${setIndex + 1}</span>
                         <div class="grid-input-wrapper">
-                            <input type="number" class="mini-input set-weight" value="${set.weight}" min="0" step="0.5">
+                            <input type="number" class="mini-input set-weight" value="${set.weight === '' || set.weight === 0 ? '' : set.weight}" min="0" step="0.5" placeholder="kg">
                         </div>
                         <div class="grid-input-wrapper">
-                            <input type="number" class="mini-input set-reps" value="${set.reps}" min="0" step="1">
+                            <input type="number" class="mini-input set-reps" value="${set.reps === '' || set.reps === 0 ? '' : set.reps}" min="0" step="1" placeholder="reps">
                         </div>
                         <div class="grid-checkbox-wrapper">
-                            <input type="checkbox" class="set-checkbox" ${isChecked} title="完了">
+                            <input type="checkbox" class="set-checkbox" ${isChecked} title="DONE">
                         </div>
-                        <button class="remove-set-btn" title="セット削除">×</button>
+                        <div style="display: flex; justify-content: center;">
+                            <button class="remove-set-btn" title="REMOVE" style="font-size: 1.1rem; opacity: 0.4;">×</button>
+                        </div>
                     </div>
                 `;
             });
@@ -552,27 +612,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="menu-header" style="cursor: pointer; user-select: none;" title="タップして開閉">
                     <div style="flex: 1; pointer-events: none;">
                         <span class="title">${item.exercise}</span>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">Vol: <span style="color: var(--text-primary); font-weight: 600;">${exerciseVolume.toLocaleString()}</span> kg</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">Vol: <span style="color: var(--text-primary); font-weight: 600;">${exerciseVolume.toLocaleString()}</span> kg ／ <span style="color: var(--text-primary); font-weight: 600;">${item.sets.length}</span> sets</div>
                     </div>
                     <div class="header-actions" style="display: flex; align-items: center; gap: 1rem;">
                         <span class="toggle-icon" style="font-size: 1.1rem; color: var(--text-secondary);">${toggleIcon}</span>
-                        <button class="delete-exercise-btn" data-index="${exerciseIndex}" title="種目削除">🗑️</button>
+                        <button class="delete-exercise-btn" data-index="${exerciseIndex}" title="Delete exercise" style="pointer-events: auto; position: relative; z-index: 10;">🗑️</button>
                     </div>
                 </div>
                 <div class="exercise-details" style="display: ${displayStyle}; margin-top: 1rem;">
-                    <div class="set-header-row" style="margin-bottom: 0.2rem; grid-template-columns: 2rem 1fr 1fr 2.5rem 2rem;">
-                        <span>セット</span>
-                        <span>kg</span>
-                        <span>回</span>
-                        <span>完了</span>
+                    <div class="set-header-row">
+                        <span>SET</span>
+                        <span>KG</span>
+                        <span>REPS</span>
+                        <span>DONE</span>
                         <span></span>
                     </div>
                     <div class="sets-container">
                         ${setsHtml}
                     </div>
-                    <button class="add-set-btn" data-index="${exerciseIndex}">+ セットを追加</button>
-                    <div style="margin-top: 1rem;">
-                        <textarea class="exercise-memo" placeholder="この種目に関するメモ（フォームの意識、調子など）" data-index="${exerciseIndex}">${exerciseMemo}</textarea>
+                    <button class="add-set-btn" data-index="${exerciseIndex}" style="border-style: solid; border-width: 1px; background: rgba(255,255,255,0.03); color: var(--text-primary); font-weight: 600; letter-spacing: 0.05em; margin-top: 1.5rem;">+ ADD SET</button>
+                    <div style="margin-top: 1.5rem;">
+                        <textarea class="exercise-memo" placeholder="NOTES (FOCUS, FEELING, ETC...)" data-index="${exerciseIndex}">${exerciseMemo}</textarea>
                     </div>
                 </div>
             `;
@@ -582,6 +642,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (totalVolumeDisplay) {
             totalVolumeDisplay.innerHTML = `${totalVolume.toLocaleString()} <span style="font-size: 1rem; font-weight: 400; color: var(--text-secondary);">kg</span>`;
+        }
+        const totalSetsDisplay = document.getElementById('total-sets-value');
+        if (totalSetsDisplay) {
+            totalSetsDisplay.textContent = totalSets;
         }
 
         if (workoutTimerInterval) {
@@ -616,9 +680,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('.delete-exercise-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
                 const idx = parseInt(e.currentTarget.getAttribute('data-index'), 10);
                 const date = getCurrentDate();
-                if (confirm('この種目とすべてのセットを削除しますか？')) {
+                if (confirm('Delete this exercise and all its sets?')) {
                     workoutHistory[date].splice(idx, 1);
                     if (workoutHistory[date].length === 0) delete workoutHistory[date];
                     saveHistory();
@@ -709,11 +775,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (isChecked) {
                     row.classList.add('completed');
-                    startTimerIfNeeded(); 
-                    startRestTimer(); 
+                    startTimerIfNeeded();
+                    startRestTimer();
                 } else {
                     row.classList.remove('completed');
-                    stopRestTimer(); 
+                    stopRestTimer();
                 }
 
                 saveHistory();
@@ -750,6 +816,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function startRestTimer() {
         if (!restTimerUi || !restTimerDisplay || !restTimerDurationSelect) return;
 
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
         if (restTimerInterval) {
             clearInterval(restTimerInterval);
         }
@@ -760,6 +831,7 @@ document.addEventListener('DOMContentLoaded', () => {
         restTimerDisplay.textContent = formatRestTime(restTimeRemaining);
         restTimerDisplay.classList.remove('finished');
         restTimerUi.classList.remove('hidden');
+        restTimerUi.classList.remove('rest-finished-flash');
 
         const label = restTimerUi.querySelector('.rest-timer-label');
         if (label) label.textContent = "REST";
@@ -773,15 +845,64 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(restTimerInterval);
                 restTimerInterval = null;
                 restTimerDisplay.textContent = "READY";
-                restTimerDisplay.style.fontSize = "1.2rem";
                 restTimerDisplay.classList.add('finished');
+                restTimerUi.classList.add('rest-finished-flash');
                 if (label) label.textContent = "UP NEXT";
 
+                // Play simple alarm beep using Web Audio API
+                playAlarmSound();
+
+                // Show Browser Notification
+                showRestNotification();
+
+                // Auto-hide after 15 seconds (give more time to see READY)
                 setTimeout(() => {
                     stopRestTimer();
-                }, 5000);
+                }, 15000);
             }
         }, 1000);
+    }
+
+    function playAlarmSound() {
+        try {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+
+            const playBeep = (delay) => {
+                const oscillator = context.createOscillator();
+                const gain = context.createGain();
+
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, context.currentTime + delay); // A5
+
+                gain.gain.setValueAtTime(0, context.currentTime + delay);
+                gain.gain.linearRampToValueAtTime(0.2, context.currentTime + delay + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + delay + 0.5);
+
+                oscillator.connect(gain);
+                gain.connect(context.destination);
+
+                oscillator.start(context.currentTime + delay);
+                oscillator.stop(context.currentTime + delay + 0.5);
+            };
+
+            // Play 3 beeps with 500ms intervals
+            playBeep(0);
+            playBeep(0.5);
+            playBeep(1.0);
+        } catch (e) {
+            console.error('Audio play failed:', e);
+        }
+    }
+
+    function showRestNotification() {
+        if (!('Notification' in window)) return;
+
+        if (Notification.permission === 'granted') {
+            new Notification('休憩終了', {
+                body: '次のセットを開始しましょう！',
+                icon: './icon-192.png'
+            });
+        }
     }
 
     function stopRestTimer() {
@@ -794,7 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (restTimerDisplay) {
             restTimerDisplay.classList.remove('finished');
-            restTimerDisplay.style.fontSize = ""; 
+            restTimerDisplay.style.fontSize = "";
         }
     }
 
@@ -848,7 +969,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('日付を選択してください。');
             return;
         }
-        updateCopyDateOptions(); 
+        updateCopyDateOptions();
         showWizardStep(2);
     });
 
@@ -857,7 +978,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     step2NewBtn.addEventListener('click', () => {
-        renderMenu(); 
+        renderMenu();
         showWizardStep(3);
     });
 
@@ -907,7 +1028,7 @@ document.addEventListener('DOMContentLoaded', () => {
             workoutHistory[date] = [];
         }
 
-        const setsToSave = [{ weight: 0, reps: 0, completed: false }];
+        const setsToSave = [{ weight: '', reps: '', completed: false }];
 
         workoutHistory[date].push({
             exercise: exercise,
@@ -929,7 +1050,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dailyMenu = workoutHistory[date];
 
         if (!dailyMenu || dailyMenu.length === 0) {
-            return; 
+            return;
         }
 
         let workoutText = `【${date} の筋トレ記録】\n`;
@@ -1007,7 +1128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         shareWorkoutToGemini();
 
         const originalText = saveMenuBtn.textContent;
-        saveMenuBtn.textContent = '保存しました！ ✓';
+        saveMenuBtn.textContent = 'SAVED! ✓';
         saveMenuBtn.style.background = '#ffffff';
         saveMenuBtn.style.color = '#000000';
 
@@ -1029,9 +1150,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     clearMenuBtn.addEventListener('click', () => {
         const date = getCurrentDate();
-        const displayDate = date === todayStr ? '今日' : 'この日';
+        const displayDate = date === todayStr ? 'Today' : date;
 
-        if (confirm(`${displayDate}のメニューを全て削除しますか？`)) {
+        if (confirm(`Clear all menu items for ${displayDate}?`)) {
             delete workoutHistory[date];
             if (workoutMetadata[date]) {
                 delete workoutMetadata[date].startTime;
@@ -1068,7 +1189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const copiedMenu = JSON.parse(JSON.stringify(sourceMenu));
         copiedMenu.forEach(item => {
             item.sets.forEach(set => {
-                set.completed = false; 
+                set.completed = false;
             });
         });
 
@@ -1084,7 +1205,7 @@ document.addEventListener('DOMContentLoaded', () => {
             copyMenuBtn.textContent = originalText;
             copyMenuBtn.style.background = '';
             copyMenuBtn.style.color = '';
-            showWizardStep(3); 
+            showWizardStep(3);
         }, 1000);
     });
 
@@ -1103,9 +1224,10 @@ document.addEventListener('DOMContentLoaded', () => {
         reviewDetails.style.display = 'block';
 
         const [y, m, d] = date.split('-');
-        reviewDateTitle.textContent = `${y}年${parseInt(m)}月${parseInt(d)}日の記録`;
+        reviewDateTitle.textContent = `${y}/${parseInt(m)}/${parseInt(d)} WORKOUT`;
 
         let totalVolume = 0;
+        let totalSets = 0;
         reviewWorkoutList.innerHTML = '';
 
         workoutHistory[date].forEach((item, exerciseIndex) => {
@@ -1124,9 +1246,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isCompleted = set.completed ? 'completed' : '';
                 const isCheckedAttr = set.completed ? 'checked' : '';
 
-                if (weight > 0 && reps > 0 && set.completed) {
-                    exerciseVolume += weight * reps;
-                    totalVolume += weight * reps;
+                if (set.completed) {
+                    totalSets++;
+                    if (weight > 0 && reps > 0) {
+                        exerciseVolume += weight * reps;
+                        totalVolume += weight * reps;
+                    }
                 }
 
                 const rpeDisplay = set.rpe ? `<span style="color: var(--text-secondary); font-size: 0.8em; margin-left: 0.5rem;">[RPE: ${set.rpe}]</span>` : '';
@@ -1135,10 +1260,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="set-row ${isCompleted}" style="pointer-events: none; opacity: ${set.completed ? '1' : '0.5'};">
                         <span class="set-number">${setIndex + 1}</span>
                         <div class="grid-input-wrapper">
-                            <span style="color: var(--text-primary); font-weight: 500;">${set.weight} <small style="color: var(--text-secondary); font-size: 0.8em;">kg</small></span>
+                            <span style="color: var(--text-primary); font-weight: 600;">${set.weight} <small style="color: var(--text-secondary); font-size: 0.75rem;">kg</small></span>
                         </div>
                         <div class="grid-input-wrapper">
-                            <span style="color: var(--text-primary); font-weight: 500;">${set.reps} <small style="color: var(--text-secondary); font-size: 0.8em;">回</small>${rpeDisplay}</span>
+                            <span style="color: var(--text-primary); font-weight: 600;">${set.reps} <small style="color: var(--text-secondary); font-size: 0.75rem;">reps</small>${rpeDisplay}</span>
                         </div>
                         <div class="grid-checkbox-wrapper">
                             <input type="checkbox" class="set-checkbox" ${isCheckedAttr} disabled>
@@ -1154,18 +1279,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="menu-header" style="cursor: pointer; user-select: none;" title="タップして開閉">
                     <div style="flex: 1; pointer-events: none;">
                         <span class="title">${item.exercise}</span>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">Vol: <span style="color: var(--text-primary); font-weight: 600;">${exerciseVolume.toLocaleString()}</span> kg</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">Vol: <span style="color: var(--text-primary); font-weight: 600;">${exerciseVolume.toLocaleString()}</span> kg ／ <span style="color: var(--text-primary); font-weight: 600;">${item.sets.length}</span> sets</div>
                     </div>
                     <div class="header-actions" style="display: flex; align-items: center; gap: 1rem;">
                         <span class="toggle-icon" style="font-size: 1.1rem; color: var(--text-secondary);">▼</span>
                     </div>
                 </div>
                 <div class="exercise-details" style="display: block; margin-top: 1rem;">
-                    <div class="set-header-row" style="margin-bottom: 0.2rem; grid-template-columns: 2rem 1fr 1.5fr 2.5rem 2rem;">
-                        <span>セット</span>
-                        <span>kg</span>
-                        <span>回/RPE</span>
-                        <span>完了</span>
+                    <div class="set-header-row">
+                        <span>SET</span>
+                        <span>KG</span>
+                        <span>REPS/RPE</span>
+                        <span>DONE</span>
                         <span></span>
                     </div>
                     <div class="sets-container">
@@ -1192,7 +1317,103 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         reviewTotalVolume.innerHTML = `${totalVolume.toLocaleString()} <span style="font-size: 1rem; font-weight: 400; color: var(--text-secondary);">kg</span>`;
+        const reviewTotalSets = document.getElementById('review-total-sets');
+        if (reviewTotalSets) {
+            reviewTotalSets.textContent = totalSets;
+        }
 
+        // --- Data Backup (Export/Import) Logic ---
+        const exportBtn = document.getElementById('export-data-btn');
+        const importBtn = document.getElementById('import-data-btn');
+        const importInput = document.getElementById('import-file-input');
+
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                const dataToExport = {
+                    workoutHistory: JSON.parse(localStorage.getItem('workoutHistory') || '{}'),
+                    workoutMetadata: JSON.parse(localStorage.getItem('workoutMetadata') || '{}'),
+                    customExercises: JSON.parse(localStorage.getItem('customExercises') || '[]'),
+                    exportDate: new Date().toISOString()
+                };
+
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                const dateStr = getCurrentDate().replace(/\//g, '');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", `1rm_backup_${dateStr}.json`);
+                document.body.appendChild(downloadAnchorNode); // required for firefox
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            });
+        }
+
+        if (importBtn && importInput) {
+            importBtn.addEventListener('click', () => {
+                importInput.click();
+            });
+
+            importInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+
+                        if (!importedData.workoutHistory && !importedData.workoutMetadata) {
+                            alert('Invalid backup file.');
+                            return;
+                        }
+
+                        const confirmMsg = "Restore data from backup?\n\n[OK]: OVERWRITE current data\n[CANCEL]: MERGE with current data\n\n*This action cannot be undone.";
+                        const isOverwrite = confirm(confirmMsg);
+
+                        if (isOverwrite) {
+                            // Overwrite
+                            if (importedData.workoutHistory) localStorage.setItem('workoutHistory', JSON.stringify(importedData.workoutHistory));
+                            if (importedData.workoutMetadata) localStorage.setItem('workoutMetadata', JSON.stringify(importedData.workoutMetadata));
+                            if (importedData.customExercises) localStorage.setItem('customExercises', JSON.stringify(importedData.customExercises));
+                        } else {
+                            // Merge
+                            const currentHistory = JSON.parse(localStorage.getItem('workoutHistory') || '{}');
+                            const currentMeta = JSON.parse(localStorage.getItem('workoutMetadata') || '{}');
+                            let currentCustomEx = JSON.parse(localStorage.getItem('customExercises') || '[]');
+
+                            // Merge custom exercises uniquely
+                            if (importedData.customExercises) {
+                                importedData.customExercises.forEach(ex => {
+                                    if (!currentCustomEx.some(c => c.name === ex.name)) {
+                                        currentCustomEx.push(ex);
+                                    }
+                                });
+                            }
+
+                            // Merge history (if same date exists, imported data replaces it)
+                            const mergedHistory = { ...currentHistory, ...(importedData.workoutHistory || {}) };
+                            const mergedMeta = { ...currentMeta, ...(importedData.workoutMetadata || {}) };
+
+                            localStorage.setItem('workoutHistory', JSON.stringify(mergedHistory));
+                            localStorage.setItem('workoutMetadata', JSON.stringify(mergedMeta));
+                            localStorage.setItem('customExercises', JSON.stringify(currentCustomEx));
+                        }
+
+                        // Reload memory variables
+                        workoutHistory = JSON.parse(localStorage.getItem('workoutHistory') || '{}');
+                        workoutMetadata = JSON.parse(localStorage.getItem('workoutMetadata') || '{}');
+
+                        alert('Data restoration complete. The page will now reload.');
+                        location.reload();
+
+                    } catch (err) {
+                        alert('Failed to load file. The file might be corrupted.\n' + err.message);
+                    } finally {
+                        importInput.value = ''; // Reset input
+                    }
+                };
+                reader.readAsText(file);
+            });
+        }
         const meta = workoutMetadata[date];
         if (meta && meta.startTime && meta.endTime) {
             reviewDuration.textContent = formatTime(meta.endTime - meta.startTime);
@@ -1216,13 +1437,19 @@ document.addEventListener('DOMContentLoaded', () => {
         'squat': 'スクワット'
     };
 
+    const exerciseDisplayNames = {
+        'benchpress': 'BENCH PRESS',
+        'deadlift': 'DEADLIFT',
+        'squat': 'SQUAT'
+    };
+
     function updateMaxRecords(exerciseKey) {
         if (typeof workoutHistory === 'undefined' || !workoutHistory) return;
 
         const targetExerciseName = exerciseNamesMap[exerciseKey];
         if (!targetExerciseName) return;
 
-        recordExerciseName.textContent = targetExerciseName;
+        recordExerciseName.textContent = exerciseDisplayNames[exerciseKey];
 
         let maxWeight = 0;
         let maxWeightDate = '--';
@@ -1291,7 +1518,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dateStr = getCurrentDate().replace(/-/g, '');
             downloadAnchorNode.setAttribute("href", dataStr);
             downloadAnchorNode.setAttribute("download", `1rm_backup_${dateStr}.json`);
-            document.body.appendChild(downloadAnchorNode); 
+            document.body.appendChild(downloadAnchorNode);
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
         });
@@ -1353,7 +1580,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (err) {
                     alert('ファイルの読み込みに失敗しました。ファイルが壊れている可能性があります。\n' + err.message);
                 } finally {
-                    importInput.value = ''; 
+                    importInput.value = '';
                 }
             };
             reader.readAsText(file);
@@ -1363,6 +1590,215 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial render
     renderMenu();
     updateMaxRecords(document.querySelector('input[name="exercise"]:checked').value);
+
+    // --- Custom Select Box Logic ---
+    function setupCustomSelect(customSelectId, onChangeCallback) {
+        const customSelect = document.getElementById(customSelectId);
+        if (!customSelect) return;
+
+        const selectEl = customSelect.querySelector('select');
+        const selectedDiv = customSelect.querySelector('.select-selected');
+        const itemsDiv = customSelect.querySelector('.select-items');
+
+        if (!selectEl || !selectedDiv || !itemsDiv) return;
+
+        // Sync initial value
+        if (selectEl.options.length > 0 && selectEl.selectedIndex >= 0) {
+            selectedDiv.innerHTML = selectEl.options[selectEl.selectedIndex].innerHTML;
+        }
+
+        // Remove old listeners to prevent duplicates if called multiple times
+        const newSelectedDiv = selectedDiv.cloneNode(true);
+        selectedDiv.parentNode.replaceChild(newSelectedDiv, selectedDiv);
+
+        const newItemsDiv = itemsDiv.cloneNode(true);
+        itemsDiv.parentNode.replaceChild(newItemsDiv, itemsDiv);
+
+        // Toggle dropdown
+        newSelectedDiv.addEventListener('click', function (e) {
+            e.stopPropagation();
+            closeAllCustomSelects(this);
+            newItemsDiv.classList.toggle('select-hide');
+            this.classList.toggle('select-arrow-active');
+
+            if (this.classList.contains('select-arrow-active')) {
+                this.parentNode.style.zIndex = '999';
+            } else {
+                this.parentNode.style.zIndex = '1';
+            }
+        });
+
+        // Delegate click for options
+        newItemsDiv.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (e.target && e.target.nodeName === "DIV" && !e.target.classList.contains('optgroup-label')) {
+                const value = e.target.getAttribute('data-value');
+
+                // Update original select
+                for (let i = 0; i < selectEl.options.length; i++) {
+                    if (selectEl.options[i].value === value) {
+                        selectEl.selectedIndex = i;
+                        const event = new Event('change', { bubbles: true });
+                        selectEl.dispatchEvent(event);
+                        break;
+                    }
+                }
+
+                // Update UI visually
+                newSelectedDiv.innerHTML = e.target.innerHTML;
+
+                const sameAsSelected = this.parentNode.querySelectorAll('.same-as-selected');
+                for (let i = 0; i < sameAsSelected.length; i++) {
+                    sameAsSelected[i].classList.remove('same-as-selected');
+                }
+                e.target.classList.add('same-as-selected');
+
+                // Close dropdown
+                newItemsDiv.classList.add('select-hide');
+                newSelectedDiv.classList.remove('select-arrow-active');
+                newSelectedDiv.parentNode.style.zIndex = '1';
+
+                if (onChangeCallback) onChangeCallback(value);
+            }
+        });
+    }
+
+    function closeAllCustomSelects(elmnt) {
+        const x = document.getElementsByClassName("select-items");
+        const y = document.getElementsByClassName("select-selected");
+        const arrNo = [];
+
+        for (let i = 0; i < y.length; i++) {
+            if (elmnt === y[i]) {
+                arrNo.push(i);
+            } else {
+                y[i].classList.remove("select-arrow-active");
+            }
+        }
+
+        for (let i = 0; i < x.length; i++) {
+            if (arrNo.indexOf(i) === -1) {
+                x[i].classList.add("select-hide");
+                if (x[i].parentNode) {
+                    x[i].parentNode.style.zIndex = '1';
+                }
+            }
+        }
+    }
+
+    document.addEventListener("click", function () {
+        closeAllCustomSelects(null);
+    });
+
+    // Initialize the static custom selects
+    setupCustomSelect('custom-rest-timer');
+
+    // --- Category Filter Modal Logic ---
+    const categoryFilterBtn = document.getElementById('category-filter-btn');
+    const categoryFilterLabel = document.getElementById('category-filter-label');
+    const categoryFilterModal = document.getElementById('category-filter-modal');
+    const categoryModalClose = document.getElementById('category-modal-close');
+    const categoryModalList = document.getElementById('category-modal-list');
+
+    if (categoryFilterBtn && categoryFilterModal) {
+        categoryFilterBtn.addEventListener('click', () => {
+            categoryFilterModal.classList.remove('hidden');
+        });
+
+        categoryModalClose.addEventListener('click', () => {
+            categoryFilterModal.classList.add('hidden');
+        });
+
+        // Close on backdrop click
+        categoryFilterModal.addEventListener('click', (e) => {
+            if (e.target === categoryFilterModal) {
+                categoryFilterModal.classList.add('hidden');
+            }
+        });
+
+        // Item selection
+        categoryModalList.addEventListener('click', (e) => {
+            const item = e.target.closest('.category-modal-item');
+            if (!item) return;
+
+            const value = item.getAttribute('data-value');
+
+            // Update selected highlight
+            categoryModalList.querySelectorAll('.category-modal-item').forEach(el => {
+                el.classList.remove('selected');
+            });
+            item.classList.add('selected');
+
+            // Update the button label
+            categoryFilterLabel.textContent = item.textContent.replace('✓ ', '');
+
+            // Update the hidden select and trigger change
+            categoryFilter.value = value;
+            const event = new Event('change', { bubbles: true });
+            categoryFilter.dispatchEvent(event);
+
+            // Close modal
+            categoryFilterModal.classList.add('hidden');
+        });
+    }
+
+    // --- Exercise Select Modal Logic ---
+    const exerciseSelectBtn = document.getElementById('exercise-select-btn');
+    const exerciseSelectLabelEl = document.getElementById('exercise-select-label');
+    const exerciseSelectModal = document.getElementById('exercise-select-modal');
+    const exerciseModalCloseBtn = document.getElementById('exercise-modal-close');
+    const exerciseModalListEl = document.getElementById('exercise-modal-list');
+
+    if (exerciseSelectBtn && exerciseSelectModal) {
+        exerciseSelectBtn.addEventListener('click', () => {
+            exerciseSelectModal.classList.remove('hidden');
+        });
+
+        exerciseModalCloseBtn.addEventListener('click', () => {
+            exerciseSelectModal.classList.add('hidden');
+        });
+
+        // Close on backdrop click
+        exerciseSelectModal.addEventListener('click', (e) => {
+            if (e.target === exerciseSelectModal) {
+                exerciseSelectModal.classList.add('hidden');
+            }
+        });
+
+        // Item selection
+        exerciseModalListEl.addEventListener('click', (e) => {
+            const item = e.target.closest('.category-modal-item');
+            if (!item) return;
+
+            const value = item.getAttribute('data-value');
+
+            // Update selected highlight
+            exerciseModalListEl.querySelectorAll('.category-modal-item').forEach(el => {
+                el.classList.remove('selected');
+            });
+            item.classList.add('selected');
+
+            // Update the button label
+            exerciseSelectLabelEl.textContent = item.textContent;
+
+            // Update the hidden select and trigger change
+            for (let i = 0; i < menuExerciseSelect.options.length; i++) {
+                if (menuExerciseSelect.options[i].value === value) {
+                    menuExerciseSelect.selectedIndex = i;
+                    const event = new Event('change', { bubbles: true });
+                    menuExerciseSelect.dispatchEvent(event);
+                    break;
+                }
+            }
+
+            // Close modal
+            exerciseSelectModal.classList.add('hidden');
+        });
+    }
+
+    // Explicitly render exercise options on start and initialize data-setup
+    const currentCategory = categoryFilter ? categoryFilter.value : 'all';
+    renderExerciseOptions(currentCategory);
 });
 
 // PWA Service Worker Registration
